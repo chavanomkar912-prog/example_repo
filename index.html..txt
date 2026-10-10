@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StudyBuddy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 20px;
+      color: #172554;
+    }
+    main {
+      max-width: 500px;
+      margin: 20px auto;
+    }
+    h1 { color: #2563eb; }
+    section {
+      background: white;
+      padding: 18px;
+      margin: 14px 0;
+      border-radius: 14px;
+    }
+    input, textarea, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+    input, textarea { border: 1px solid #cbd5e1; }
+    button {
+      background: #2563eb;
+      color: white;
+      border: 0;
+      cursor: pointer;
+    }
+    li { margin: 12px 0; overflow-wrap: anywhere; }
+    li button { width: auto; margin-left: 8px; }
+    small { color: #64748b; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>📚 StudyBuddy</h1>
+  <p>Your free student study assistant.</p>
+
+  <section>
+    <h3>✅ Study Planner</h3>
+    <input id="task" placeholder="Enter a study task">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="tasks"></ul>
+  </section>
+
+  <section>
+    <h3>📝 My Notes</h3>
+    <textarea id="note" rows="5"
+      placeholder="Write your study notes here"></textarea>
+    <button onclick="saveNote()">Save Notes</button>
+    <p id="status"></p>
+  </section>
+
+  <section>
+    <h3>💡 Daily Motivation</h3>
+    <p id="quote">Small steps every day lead to progress.</p>
+    <button onclick="newQuote()">New Motivation</button>
+  </section>
+
+  <small>StudyBuddy • Learn a little every day</small>
+</main>
+
+<script>
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+  function renderTasks() {
+    document.getElementById("tasks").innerHTML = "";
+    tasks.forEach((task, index) => {
+      const li = document.createElement("li");
+      li.append(document.createTextNode(task));
+      const del = document.createElement("button");
+      del.textContent = "Delete";
+      del.onclick = () => {
+        tasks.splice(index, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        renderTasks();
+      };
+      li.appendChild(del);
+      document.getElementById("tasks").appendChild(li);
+    });
+  }
+
+  function addTask() {
+    const input = document.getElementById("task");
+    if (!input.value.trim()) return;
+    tasks.push(input.value.trim());
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    input.value = "";
+    renderTasks();
+  }
+
+  function saveNote() {
+    localStorage.setItem(
+      "studyNote", document.getElementById("note").value
+    );
+    document.getElementById("status").textContent = "Notes saved!";
+  }
+
+  document.getElementById("note").value =
+    localStorage.getItem("studyNote") || "";
+
+  const quotes = [
+    "Keep learning. Keep growing.",
+    "Every expert was once a beginner.",
+    "Your future starts with what you learn today."
+  ];
+
+  function newQuote() {
+    document.getElementById("quote").textContent =
+      quotes[Math.floor(Math.random() * quotes.length)];
+  }
+
+  renderTasks();
+</script>
+</body>
+</html>
